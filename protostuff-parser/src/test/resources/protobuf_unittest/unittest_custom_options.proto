@@ -150,21 +150,22 @@ message DummyMessageInvalidAsOptionType {
 }
 
 extend google.protobuf.MessageOptions {
-    optional bool bool_opt = 7706090;
-    optional int32 int32_opt = 7705709;
-    optional int64 int64_opt = 7705542;
-    optional uint32 uint32_opt = 7704880;
-    optional uint64 uint64_opt = 7702367;
-    optional sint32 sint32_opt = 7701568;
-    optional sint64 sint64_opt = 7700863;
-    optional fixed32 fixed32_opt = 7700307;
-    optional fixed64 fixed64_opt = 7700194;
-    optional sfixed32 sfixed32_opt = 7698645;
-    optional sfixed64 sfixed64_opt = 7685475;
-    optional float float_opt = 7675390;
-    optional double double_opt = 7673293;
-    optional string string_opt = 7673285;
-    optional bytes bytes_opt = 7673238;
+    optional         bool     bool_opt = 7706090;
+    optional        int32    int32_opt = 7705709;
+    optional        int64    int64_opt = 7705542;
+    optional       uint32   uint32_opt = 7704880;
+    optional       uint64   uint64_opt = 7702367;
+    optional       sint32   sint32_opt = 7701568;
+    optional       sint64   sint64_opt = 7700863;
+    optional      fixed32  fixed32_opt = 7700307;
+    optional      fixed64  fixed64_opt = 7700194;
+    optional     sfixed32 sfixed32_opt = 7698645;
+    optional     sfixed64 sfixed64_opt = 7685475;
+    optional        float    float_opt = 7675390;
+    optional       double   double_opt = 7673293;
+    optional       string   string_opt = 7673285;
+    optional       string  mstring_opt = 7673286;
+    optional        bytes    bytes_opt = 7673238;
     optional DummyMessageContainingEnum.TestEnumType enum_opt = 7673233;
     optional DummyMessageInvalidAsOptionType message_type_opt = 7665967;
 }
@@ -198,12 +199,14 @@ message CustomOptionMaxIntegerValues {
 }
 
 message CustomOptionOtherValues {
-    option (int32_opt) = -100; // To test sign-extension.
-    option (float_opt) = 12.3456789;
-    option (double_opt) = 1.234567890123456789;
-    option (string_opt) = "Hello, \"World\"";
-    option (bytes_opt) = "Hello\0World";
-    option (enum_opt) = TEST_OPTION_ENUM_TYPE2;
+    option   (int32_opt) = -100;  // To test sign-extension.
+    option   (float_opt) = 12.3456789;
+    option  (double_opt) = 1.234567890123456789;
+    option  (string_opt) = "Hello, \"World\"";
+    option (mstring_opt) = `Hello
+World`;
+    option   (bytes_opt) = "Hello\0World";
+    option    (enum_opt) = TEST_OPTION_ENUM_TYPE2;
 }
 
 message SettingRealsFromPositiveInts {
@@ -311,12 +314,14 @@ message AggregateMessageSetElement {
         optional AggregateMessageSetElement message_set_extension = 15447542;
     }
     optional string s = 1;
+    optional string ms = 2;
 }
 
 // A helper type used to test aggregate option parsing
 message Aggregate {
     optional int32 i = 1;
     optional string s = 2;
+    optional string ms = 6;
 
     // A nested object
     optional Aggregate sub = 3;
@@ -358,16 +363,25 @@ extend google.protobuf.MethodOptions {
 // Try using AggregateOption at different points in the proto grammar
 option (fileopt) = {
   s: 'FileAnnotation'
+  ms: `multiline
+FileAnnotation`
+
   // Also test the handling of comments
   /* of both types */ i: 100
 
-  sub { s: 'NestedFileAnnotation' }
+  sub {
+    s: 'NestedFileAnnotation'
+    ms: `multiline
+NestedFileAnnotation`
+  }
 
   // Include a google.protobuf.FileOptions and recursively extend it with
   // another fileopt.
   file {
     [protobuf_unittest.fileopt] {
       s:'FileExtensionAnnotation'
+      ms: `multiline
+FileExtensionAnnotation`
     }
   }
 
@@ -375,25 +389,52 @@ option (fileopt) = {
   mset {
     [protobuf_unittest.AggregateMessageSetElement.message_set_extension] {
       s: 'EmbeddedMessageSetElement'
+      ms: `multiline
+EmbeddedMessageSetElement`
     }
   }
 };
 
 message AggregateMessage {
-    option (msgopt) = { i:101 s:'MessageAnnotation' };
-    optional int32 fieldname = 1 [(fieldopt) = { s:'FieldAnnotation' }];
+    option (msgopt) = {
+    i: 101
+    s: 'MessageAnnotation'
+    ms: `multiline
+MessageAnnotation`
+  };
+    optional int32 fieldname = 1 [(fieldopt) = {
+    s: 'FieldAnnotation'
+    ms: `multiline
+FieldAnnotation`
+  }];
 }
 
 service AggregateService {
-    option (serviceopt) = { s:'ServiceAnnotation' };
+    option (serviceopt) = {
+    s: 'ServiceAnnotation'
+    ms: `multiline
+ServiceAnnotation`
+  };
     rpc Method (AggregateMessage) returns (AggregateMessage) {
-        option (methodopt) = { s:'MethodAnnotation' };
+        option (methodopt) = {
+      s: 'MethodAnnotation'
+      ms: `multiline
+MethodAnnotation`
+    };
     }
 }
 
 enum AggregateEnum {
-    option (enumopt) = { s:'EnumAnnotation' };
-    VALUE = 1 [(enumvalopt) = { s:'EnumValueAnnotation' }];
+    option (enumopt) = {
+    s: 'EnumAnnotation'
+    ms: `multiline
+EnumAnnotation`
+ };
+    VALUE = 1 [(enumvalopt) = {
+    s: 'EnumValueAnnotation'
+    ms: `multiline
+EnumValueAnnotation`
+  }];
 }
 
 // Test custom options for nested type.

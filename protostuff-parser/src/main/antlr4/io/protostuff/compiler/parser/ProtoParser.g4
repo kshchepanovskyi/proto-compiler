@@ -20,7 +20,7 @@ syntaxStatement
     : SYNTAX ASSIGN syntaxName SEMICOLON
     ;
 syntaxName
-    : STRING_VALUE
+    : STRING_NAME
     ;
 packageStatement
     : PACKAGE packageName SEMICOLON
@@ -32,7 +32,7 @@ importStatement
     : IMPORT PUBLIC? fileReference SEMICOLON
     ;
 fileReference
-    : STRING_VALUE
+    : STRING_NAME
     ;
 optionEntry
     : OPTION option SEMICOLON
@@ -160,7 +160,7 @@ reservedFieldNames
     : RESERVED reservedFieldName (COMMA reservedFieldName)* SEMICOLON
     ;
 reservedFieldName
-    : STRING_VALUE
+    : STRING_NAME
     ;
 field
     : fieldModifier? typeReference fieldName ASSIGN tag fieldOptions? SEMICOLON
@@ -211,6 +211,7 @@ optionValue
     : INTEGER_VALUE
     | FLOAT_VALUE
     | BOOLEAN_VALUE
+    | STRING_NAME
     | STRING_VALUE
     | IDENT
     | textFormat
@@ -230,6 +231,7 @@ textFormatOptionValue
     : INTEGER_VALUE
     | FLOAT_VALUE
     | BOOLEAN_VALUE
+    | STRING_NAME
     | STRING_VALUE
     | IDENT
     ;

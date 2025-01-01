@@ -182,6 +182,10 @@ IDENT
     :   (ALPHA | UNDERSCORE) (ALPHA | DIGIT | UNDERSCORE)*
     ;
 STRING_VALUE
+    : BACKTICK_STRING
+    | TRIPLE_DOUBLE_QUOTE_STRING
+    ;
+STRING_NAME
     : DOUBLE_QUOTE_STRING
     | SINGLE_QUOTE_STRING
     ;
@@ -202,6 +206,17 @@ fragment DOUBLE_QUOTE_STRING
 fragment SINGLE_QUOTE_STRING
     : '\'' ( ESC_SEQ | ~('\\' | '\'' | '\r' | '\n') )* '\''
     ;
+fragment BACKTICK_STRING
+    : '`' ( ESC_SEQ | ~('\\' | '`') )* '`'
+    ;
+fragment TRIPLE_DOUBLE_QUOTE_STRING
+    : '"""' TDQ_STRING_CHAR*? '"""'
+    ;
+fragment TDQ_STRING_CHAR
+    :   ~["\\]
+    |   '"' { !(_input.LA(1) == '"' && _input.LA(2) == '"') }?
+    |   ESC_SEQ
+    ;
 fragment EXPONENT
     : (FLOAT_LIT|DEC_VALUE) EXP DEC_VALUE
     ;
@@ -212,7 +227,7 @@ fragment FLOAT_LIT
 fragment INF
     : 'inf'
     ;
-fragment NAN 
+fragment NAN
     : 'nan'
     ;
 fragment EXP
@@ -247,7 +262,7 @@ fragment UNDERSCORE
     : '_'
     ;
 fragment ESC_SEQ
-    :   '\\' ('a'|'v'|'b'|'t'|'n'|'f'|'r'|'?'|'"'|'\''|'\\')
+    :   '\\' ('a'|'v'|'b'|'t'|'n'|'f'|'r'|'?'|'"'|'\''|'\\'|'`')
     |   '\\' ('x'|'X') HEX_DIGIT HEX_DIGIT
     |   UNICODE_ESC
     |   OCTAL_ESC

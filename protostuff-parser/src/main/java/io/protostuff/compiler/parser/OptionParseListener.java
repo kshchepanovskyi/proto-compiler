@@ -52,10 +52,14 @@ public class OptionParseListener extends AbstractProtoParserListener {
         } else if (optionValueContext.INTEGER_VALUE() != null) {
             String text = optionValueContext.INTEGER_VALUE().getText();
             optionValue = parseInteger(sourceCodeLocation, text);
+        } else if (optionValueContext.STRING_NAME() != null) {
+            String text = optionValueContext.STRING_NAME().getText();
+            // TODO: unescape
+            optionValue = DynamicMessage.Value.createString(sourceCodeLocation, Util.trimStringName(text));
         } else if (optionValueContext.STRING_VALUE() != null) {
             String text = optionValueContext.STRING_VALUE().getText();
             // TODO: unescape
-            optionValue = DynamicMessage.Value.createString(sourceCodeLocation, Util.removeFirstAndLastChar(text));
+            optionValue = DynamicMessage.Value.createString(sourceCodeLocation, Util.trimStringValue(text));
         } else if (optionValueContext.IDENT() != null) {
             String text = optionValueContext.IDENT().getText();
             optionValue = DynamicMessage.Value.createEnum(sourceCodeLocation, text);
@@ -142,10 +146,14 @@ public class OptionParseListener extends AbstractProtoParserListener {
         } else if (ctx.textFormatOptionValue().INTEGER_VALUE() != null) {
             String text = ctx.textFormatOptionValue().INTEGER_VALUE().getText();
             optionValue = parseInteger(sourceCodeLocation, text);
+        } else if (ctx.textFormatOptionValue().STRING_NAME() != null) {
+            String text = ctx.textFormatOptionValue().STRING_NAME().getText();
+            // TODO: unescape
+            optionValue = DynamicMessage.Value.createString(sourceCodeLocation, Util.trimStringName(text));
         } else if (ctx.textFormatOptionValue().STRING_VALUE() != null) {
             String text = ctx.textFormatOptionValue().STRING_VALUE().getText();
             // TODO: unescape
-            optionValue = DynamicMessage.Value.createString(sourceCodeLocation, Util.removeFirstAndLastChar(text));
+            optionValue = DynamicMessage.Value.createString(sourceCodeLocation, Util.trimStringValue(text));
         } else if (ctx.textFormatOptionValue().IDENT() != null) {
             String text = ctx.textFormatOptionValue().IDENT().getText();
             optionValue = DynamicMessage.Value.createEnum(sourceCodeLocation, text);

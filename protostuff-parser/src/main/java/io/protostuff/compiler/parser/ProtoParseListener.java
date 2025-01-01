@@ -74,7 +74,7 @@ public class ProtoParseListener extends AbstractProtoParserListener {
     public void exitSyntaxStatement(ProtoParser.SyntaxStatementContext ctx) {
         Proto proto = context.peek(Proto.class);
         String text = ctx.syntaxName().getText();
-        String value = Util.removeFirstAndLastChar(text);
+        String value = Util.trimStringName(text);
         Syntax syntax = new Syntax(proto, value);
         syntax.setSourceCodeLocation(getSourceCodeLocation(ctx));
         proto.setSyntax(syntax);
@@ -93,7 +93,7 @@ public class ProtoParseListener extends AbstractProtoParserListener {
     public void exitImportStatement(ProtoParser.ImportStatementContext ctx) {
         Proto proto = context.peek(Proto.class);
         String text = ctx.fileReference().getText();
-        String fileName = Util.removeFirstAndLastChar(text);
+        String fileName = Util.trimStringName(text);
         Import anImport = new Import(proto, fileName, ctx.PUBLIC() != null);
         anImport.setSourceCodeLocation(getSourceCodeLocation(ctx));
         proto.addImport(anImport);

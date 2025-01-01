@@ -1,6 +1,7 @@
 package io.protostuff.compiler.parser;
 
 import com.google.common.base.Preconditions;
+
 import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
@@ -26,11 +27,40 @@ public class Util {
      * @param text given string
      *
      * @return substring of given string - without first and last characters
+     * @deprecated replaced by {@link #trimStringName(String)}
      */
     public static String removeFirstAndLastChar(String text) {
+        return trimStringName(text);
+    }
+
+    /**
+     * Remove first and last character from given string name and return result.
+     *
+     * @param text given string
+     *
+     * @return substring of given string - without first and last characters
+     */
+    public static String trimStringName(String text) {
         Preconditions.checkNotNull(text, "text can not be null");
         int n = text.length();
         return text.substring(1, n - 1);
+    }
+
+    /**
+     * Remove first and last character from given string value and return result.
+     *
+     * A string value can be wrapped by either a backtick, `, or triple double
+     * quote, """.
+     *
+     * @param text given string value
+     *
+     * @return substring of given string - without first and last characters
+     */
+    public static String trimStringValue(String text) {
+        Preconditions.checkNotNull(text, "text can not be null");
+        int size = text.startsWith("`") ? 1 : 3;
+        int n = text.length();
+        return text.substring(size, n - size);
     }
 
     /**

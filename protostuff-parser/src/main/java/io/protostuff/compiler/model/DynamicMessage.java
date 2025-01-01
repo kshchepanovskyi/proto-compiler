@@ -148,7 +148,7 @@ public class DynamicMessage implements Map<String, DynamicMessage.Value> {
     private Key createKey(String fieldName) {
         Key key;
         if (fieldName.startsWith("(")) {
-            String name = Util.removeFirstAndLastChar(fieldName);
+            String name = Util.trimStringName(fieldName);
             if (name.startsWith(".")) {
                 name = name.substring(1);
             }

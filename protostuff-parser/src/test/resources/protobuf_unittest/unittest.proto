@@ -161,6 +161,8 @@ message TestAllTypes {
     optional bool default_bool = 73 [default = true];
     optional string default_string = 74 [default = "hello"];
     optional bytes default_bytes = 75 [default = "world"];
+    optional string default_m_string = 76 [default = `hello
+world`];
 
     optional NestedEnum default_nested_enum = 81 [default = BAR];
     optional ForeignEnum default_foreign_enum = 82 [default = FOREIGN_BAR];
@@ -560,6 +562,9 @@ message TestExtremeDefaultValues {
     optional string string_piece_with_zero = 25 [ctype = STRING_PIECE, default = "ab\000c"];
     optional string cord_with_zero = 26 [ctype = CORD, default = "12\0003"];
     optional string replacement_string = 27 [default = "${unknown}"];
+    optional string tick_multiline_string = 28 [default=`backtick
+multiline
+default`];
 }
 
 message SparseEnumMessage {

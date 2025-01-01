@@ -72,7 +72,7 @@ public class MessageParseListener extends AbstractProtoParserListener {
         UserType userType = context.peek(UserType.class);
         for (ProtoParser.ReservedFieldNameContext fieldNameContext : ctx.reservedFieldName()) {
             String fieldName = fieldNameContext.getText();
-            fieldName = Util.removeFirstAndLastChar(fieldName);
+            fieldName = Util.trimStringName(fieldName);
             userType.addReservedFieldName(fieldName);
         }
     }
