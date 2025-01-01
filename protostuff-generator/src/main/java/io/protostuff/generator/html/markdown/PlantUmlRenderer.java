@@ -1,4 +1,4 @@
-package io.protostuff.generator.html.uml;
+package io.protostuff.generator.html.markdown;
 
 import io.protostuff.generator.GeneratorException;
 import java.io.ByteArrayOutputStream;
@@ -8,49 +8,54 @@ import java.util.Map;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
-import org.parboiled.common.Base64;
-import org.pegdown.Printer;
-import org.pegdown.VerbatimSerializer;
-import org.pegdown.ast.VerbatimNode;
+import net.sourceforge.plantuml.code.Base64Coder;
 
-/**
- * Source: https://bitbucket.org/peachjean/pegdown-uml/src/3e053df209e8?at=default
- * Author: Jared Bunting, jared.bunting@peachjean.com
- * Licensed under GNU General Public License (GPL)
- * http://www.gnu.org/licenses/gpl.txt
- */
-public class PlantUmlVerbatimSerializer implements VerbatimSerializer {
+public class PlantUmlRenderer {
 
     /**
-     * Register an instance of {@link PlantUmlVerbatimSerializer} in the given serializer's map.
+     * Register an instance of {@link PlantUmlRenderer} in the given serializer's map.
      */
-    public static void addToMap(final Map<String, VerbatimSerializer> serializerMap) {
-        PlantUmlVerbatimSerializer serializer = new PlantUmlVerbatimSerializer();
+    public static void addToMap(final Map<String, PlantUmlRenderer> serializerMap) {
+        PlantUmlRenderer serializer = new PlantUmlRenderer();
         for (Type type : Type.values()) {
             String name = type.getName();
             serializerMap.put(name, serializer);
         }
     }
 
-    @Override
-    public void serialize(VerbatimNode node, Printer printer) {
-        Type type = Type.getByName(node.getType());
+    /**
+     * Serialize given plantuml block text to string (embedded image).
+     */
+    public String serialize(String nodeType, String nodeText) {
+        Type type = Type.getByName(nodeType);
 
-        String formatted = type.wrap(node.getText());
+        String formatted = type.wrap(nodeText);
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         SourceStringReader reader = new SourceStringReader(formatted);
         String desc;
         try {
             desc = reader.generateImage(baos, type.getFormatOption());
         } catch (IOException e) {
-            throw new GeneratorException("Could not generate uml for node " + node, e);
+            throw new GeneratorException("Could not generate uml for node " + nodeType + ": " + nodeText, e);
         }
-        final String rendered = type.render(baos.toByteArray(), desc);
-        printer.print(rendered);
+        return type.render(baos.toByteArray(), desc);
+    }
+
+    /**
+     * Check if fenced block type is supported.
+     */
+    public boolean supports(String type) {
+        for (Type value : Type.values()) {
+            if (value.getName().equalsIgnoreCase(type)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     enum Type {
         UML(OutputType.SVG),
+        PLANTUML(OutputType.SVG),
         DOT(OutputType.SVG),
         JCCKIT(OutputType.PNG),
         DITAA(OutputType.PNG);
@@ -104,7 +109,8 @@ public class PlantUmlVerbatimSerializer implements VerbatimSerializer {
 
             @Override
             public String render(final byte[] bytes, final String desc) {
-                return String.format("<img alt=\"%s\" src=\"data:image/png;base64,%s\"/>", desc, Base64.rfc2045().encodeToString(bytes, false));
+                var base64 = new String(Base64Coder.encode(bytes));
+                return String.format("<img alt=\"%s\" src=\"data:image/png;base64,%s\"/>", desc, base64);
             }
         };
 

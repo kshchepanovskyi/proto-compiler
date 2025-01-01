@@ -20,8 +20,8 @@ import io.protostuff.generator.html.json.pages.JsonPageGenerator;
 import io.protostuff.generator.html.json.pages.JsonPagesIndexGenerator;
 import io.protostuff.generator.html.json.proto.JsonProtoGenerator;
 import io.protostuff.generator.html.json.service.JsonServiceGenerator;
+import io.protostuff.generator.html.markdown.FlexmarkMarkdownProcessor;
 import io.protostuff.generator.html.markdown.MarkdownProcessor;
-import io.protostuff.generator.html.markdown.PegDownMarkdownProcessor;
 import io.protostuff.generator.java.JavaExtensionProvider;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -54,7 +54,7 @@ public class CompilerModule extends AbstractModule {
     protected void configure() {
         bind(CompilerRegistry.class);
         bind(CompilerUtils.class);
-        bind(MarkdownProcessor.class).to(PegDownMarkdownProcessor.class).in(Scopes.SINGLETON);
+        bind(MarkdownProcessor.class).to(FlexmarkMarkdownProcessor.class).in(Scopes.SINGLETON);
         install(new FactoryModuleBuilder()
                 .implement(ProtoCompiler.class, StCompiler.class)
                 .build(StCompilerFactory.class));

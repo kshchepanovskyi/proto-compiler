@@ -2,7 +2,7 @@ pipeline {
     agent any
     tools {
         maven 'M35'
-        jdk 'JDK 8'
+        jdk 'JDK 11'
     }
     options {
         ansiColor('xterm')
